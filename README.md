@@ -1,4 +1,4 @@
-# Sysmon v11.10
+# Sysmon
 This is to archive a working version of Sysmon tested with OpenEDR client agents. 
 
 # Nxlog-CE 
