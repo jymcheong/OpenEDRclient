@@ -25,6 +25,6 @@ if($app) {
 Stop-Process -erroraction 'silentlycontinue' -Force -Name "uat" | Out-Null
 Stop-Process -erroraction 'silentlycontinue' -Force -Name "dpfm" | Out-Null
 
-schtasks /Delete /TN "UAT" /F | Out-Null
-schtasks /Delete /TN "UATupload" /F | Out-Null 
-schtasks /Delete /TN "DFPM" /F | Out-Null 
+schtasks /Delete /TN "UAT" /F 
+schtasks /Delete /TN "UATupload" /F  
+schtasks /Delete /TN "DFPM" /F  
