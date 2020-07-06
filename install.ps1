@@ -50,7 +50,7 @@ Write-Output "Installing Sysmon..."
 Start-Process -FilePath "$env:comspec" -Verb runAs -Wait -ArgumentList "/c sysmon.exe -accepteula -i $TARGETDIR\installers\smconfig.xml"
 
 if($SFTPCONFURL) {
-    $wc.DownloadFile($FTPCONFURL, "$TARGETDIR\sftpconf.zip")    
+    $wc.DownloadFile($SFTPCONFURL, "$TARGETDIR\sftpconf.zip")    
 }
 
 Set-Location "$TARGETDIR\installers"
