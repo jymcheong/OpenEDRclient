@@ -37,10 +37,12 @@ if($FileHash.Hash -ne $SYSMON_SHA256_HASH) { Write-Host 'Checksum failed!'; exit
 Write-Host 'Extracting Sysmon...'
 Get-ChildItem "$DOWNLOADDIR\$SYSMONFILENAME" | Expand-Archive -Force -DestinationPath $DOWNLOADDIR
 
+# uninstall if existing target directory exists
 if(Test-Path $TARGETDIR) {
     IEX $wc.DownloadString('https://raw.githubusercontent.com/jymcheong/openedrClient/master/uninstall.ps1')
 }
 
+# start the MSI installations
 Set-Location $DOWNLOADDIR
 Write-Output "Installing OpenEDR..."
 Start-Process -FilePath "$env:comspec" -Verb runAs -Wait -ArgumentList "/c msiexec /i $OPENEDRFILENAME TARGETDIR=$TARGETDIR /qb /L*V OPENEDRinstall.log"
@@ -49,10 +51,18 @@ Start-Process -FilePath "$env:comspec" -Verb runAs -Wait -ArgumentList "/c msiex
 Write-Output "Installing Sysmon..."
 Start-Process -FilePath "$env:comspec" -Verb runAs -Wait -ArgumentList "/c sysmon.exe -accepteula -i $TARGETDIR\installers\smconfig.xml"
 
+# Configuration related 
+## Download the SFTP upload-destination configuration if defined
 if($SFTPCONFURL) {
     $wc.DownloadFile($SFTPCONFURL, "$TARGETDIR\sftpconf.zip")    
 }
 
+## Deploy in detectOnly mode; NO automated termination of foreign-file-backed processes
+if($detectOnly) {
+  New-Item -ItemType Directory -Force -Path "$TARGETDIR\conf\dfpm\detectOnly" | Out-Null 
+}
+
+## Update the target directory within various scheduled-task configuration files
 Set-Location "$TARGETDIR\installers"
 ((Get-Content -path DFPM.xml -Raw) -replace 'TARGETDIR',$TARGETDIR) | Set-Content -Path DFPM.xml
 ((Get-Content -path UploadSchtasks.xml -Raw) -replace 'TARGETDIR',$TARGETDIR) | Set-Content -Path UploadSchtasks.xml
