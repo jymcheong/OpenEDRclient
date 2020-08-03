@@ -19,7 +19,7 @@ $NET46_SHA256_HASH='B21D33135E67E3486B154B11F7961D8E1CFD7A603267FB60FEBB4A6FEAB5
 # Create a location to download the files to
 New-Item -ItemType Directory -Force -Path $DOWNLOADDIR | Out-Null
 
-$wc = [System.Net.WebClient]::new()
+$wc = New-Object System.Net.WebClient
 Write-Host 'Downloading OpenEDR...'
 $wc.DownloadFile($openEdrInstallerURL, "$DOWNLOADDIR\$OPENEDRFILENAME")
 $FileHash = Get-FileHash -Path "$DOWNLOADDIR\$OPENEDRFILENAME"
