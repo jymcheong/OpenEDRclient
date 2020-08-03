@@ -20,6 +20,13 @@ $NET46_SHA256_HASH='B21D33135E67E3486B154B11F7961D8E1CFD7A603267FB60FEBB4A6FEAB5
 New-Item -ItemType Directory -Force -Path $DOWNLOADDIR | Out-Null
 
 $wc = New-Object System.Net.WebClient
+
+# Configuration related 
+## Download the SFTP upload-destination configuration if defined
+if($SFTPCONFURL) {
+    $wc.DownloadFile($SFTPCONFURL, "$TARGETDIR\sftpconf.zip")    
+}
+
 Write-Host 'Downloading OpenEDR...'
 $wc.DownloadFile($openEdrInstallerURL, "$DOWNLOADDIR\$OPENEDRFILENAME")
 $FileHash = Get-FileHash -Path "$DOWNLOADDIR\$OPENEDRFILENAME"
@@ -35,7 +42,8 @@ $wc.DownloadFile($sysmonInstallerURL, "$DOWNLOADDIR\$SYSMONFILENAME")
 $FileHash = Get-FileHash -Path "$DOWNLOADDIR\$SYSMONFILENAME"
 if($FileHash.Hash -ne $SYSMON_SHA256_HASH) { Write-Host 'Checksum failed!'; exit } 
 Write-Host 'Extracting Sysmon...'
-Get-ChildItem "$DOWNLOADDIR\$SYSMONFILENAME" | Expand-Archive -Force -DestinationPath $DOWNLOADDIR
+[System.Reflection.Assembly]::LoadWithPartialName("System.IO.Compression.FileSystem") | Out-Null
+[System.IO.Compression.ZipFile]::ExtractToDirectory("$DOWNLOADDIR\$SYSMONFILENAME",$DOWNLOADDIR)
 
 # uninstall if existing target directory exists
 if(Test-Path $TARGETDIR) {
@@ -51,11 +59,6 @@ Start-Process -FilePath "$env:comspec" -Verb runAs -Wait -ArgumentList "/c msiex
 Write-Output "Installing Sysmon..."
 Start-Process -FilePath "$env:comspec" -Verb runAs -Wait -ArgumentList "/c sysmon.exe -accepteula -i $TARGETDIR\installers\smconfig.xml"
 
-# Configuration related 
-## Download the SFTP upload-destination configuration if defined
-if($SFTPCONFURL) {
-    $wc.DownloadFile($SFTPCONFURL, "$TARGETDIR\sftpconf.zip")    
-}
 
 ## Deploy in detectOnly mode; NO automated termination of foreign-file-backed processes
 if($detectOnly) {
@@ -89,6 +92,8 @@ if($net46 -eq $false) {
     if($FileHash.Hash -ne $NET46_SHA256_HASH) { Write-Host 'Checksum failed!'; exit } 
     Write-Output "Installing .NET 4.6..."
     Start-Process -FilePath "$env:comspec" -Verb runAs -Wait -ArgumentList "/c $DOWNLOADDIR\$NET46FILENAME"
+    Set-Location -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce'
+    Set-ItemProperty -Path . -Name installOpenEDR -Value 'C:\WINDOWS\system32\WindowsPowerShell\v1.0\powershell.exe "Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString(\'https://raw.githubusercontent.com/jymcheong/openedrClient/master/install.ps1\'))"'
 }
 
 
