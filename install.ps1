@@ -42,6 +42,7 @@ if($net46 -eq $false) {
     Set-ItemProperty -Path . -Name installOpenEDR -Value 'C:\WINDOWS\system32\WindowsPowerShell\v1.0\powershell.exe "Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString(\'https://raw.githubusercontent.com/jymcheong/openedrClient/master/install.ps1\'))"'
 }
 
+# Download the installers...
 Write-Host 'Downloading OpenEDR...'
 $wc.DownloadFile($openEdrInstallerURL, "$DOWNLOADDIR\$OPENEDRFILENAME")
 $FileHash = Get-FileHash -Path "$DOWNLOADDIR\$OPENEDRFILENAME"
