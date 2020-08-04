@@ -33,14 +33,14 @@ Get-ChildItem 'HKLM:\SOFTWARE\Microsoft\NET Framework Setup\NDP' -recurse |
 Get-ItemProperty -name Version,Release -EA 0 | ForEach-Object { if($_.Release -ge 393295) { $net46 = $true}}
 if($net46 -eq $false) {
     $wc.DownloadFile("https://raw.githubusercontent.com/jymcheong/openedrClient/master/install.ps1", "$DOWNLOADDIR\install.ps1")
+    Set-Location -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce'
+    Set-ItemProperty -Path . -Name installOpenEDR -Value "C:\WINDOWS\system32\WindowsPowerShell\v1.0\powershell.exe Set-ExecutionPolicy Bypass -Scope Process -Force -File $DOWNLOADDIR\install.ps1"
     Write-Output "Downloading .NET 4.6 Standalone Installer..."
     $wc.DownloadFile($net46InstallerURL, "$DOWNLOADDIR\$NET46FILENAME")
     $FileHash = Get-FileHash -Path "$DOWNLOADDIR\$NET46FILENAME"
     if($FileHash.Hash -ne $NET46_SHA256_HASH) { Write-Host 'Checksum failed!'; exit } 
     Write-Output "Installing .NET 4.6..."
-    Start-Process -FilePath "$env:comspec" -Verb runAs -Wait -ArgumentList "/c $DOWNLOADDIR\$NET46FILENAME"
-    Set-Location -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce'
-    Set-ItemProperty -Path . -Name installOpenEDR -Value "C:\WINDOWS\system32\WindowsPowerShell\v1.0\powershell.exe Set-ExecutionPolicy Bypass -Scope Process -Force -File $DOWNLOADDIR\install.ps1"
+    Start-Process -FilePath "$env:comspec" -Verb runAs -Wait -ArgumentList "/c $DOWNLOADDIR\$NET46FILENAME"    
 }
 
 # Download the installers...
