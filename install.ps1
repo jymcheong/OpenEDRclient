@@ -11,7 +11,7 @@ $net46InstallerURL='https://download.microsoft.com/download/C/3/A/C3A5200B-D33C-
 
 # System.Net.WebClient will fail to download if remote site has TLS1.2
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-$OPENEDR_SHA256_HASH='E837B9087ED8DD11A0E56058A6B1D72D8B0769696E7F317C7009986B0808268B'
+$OPENEDR_SHA256_HASH='90A8D976D9CE305EEE5FF05AB99AF7D173BCBDB7C19C94FCFD5F8FE687D79143'
 $NXLOG_SHA256_HASH='DCDDD2297C4FAD9FDEAA36276D58317A7EA1EFCD6851F89215A7231CDA6BA266'
 $SYSMON_SHA256_HASH='78E640D1C0002A97E9D2D9AB528D7BBA3A350E978D7F619F78859C3D68A85F25'
 $NET46_SHA256_HASH='B21D33135E67E3486B154B11F7961D8E1CFD7A603267FB60FEBB4A6FEAB5CF87'
@@ -25,6 +25,22 @@ $wc = New-Object System.Net.WebClient
 ## Download the SFTP upload-destination configuration if defined
 if($SFTPCONFURL) {
     $wc.DownloadFile($SFTPCONFURL, "$TARGETDIR\sftpconf.zip")    
+}
+
+# Check .NET 4.6
+$net46 = $false
+Get-ChildItem 'HKLM:\SOFTWARE\Microsoft\NET Framework Setup\NDP' -recurse |
+Get-ItemProperty -name Version,Release -EA 0 | ForEach-Object { if($_.Release -ge 393295) { $net46 = $true}}
+if($net46 -eq $false) {
+    $wc.DownloadFile("https://raw.githubusercontent.com/jymcheong/openedrClient/master/install.ps1", "$DOWNLOADDIR\install.ps1")
+    Write-Output "Downloading .NET 4.6 Standalone Installer..."
+    $wc.DownloadFile($net46InstallerURL, "$DOWNLOADDIR\$NET46FILENAME")
+    $FileHash = Get-FileHash -Path "$DOWNLOADDIR\$NET46FILENAME"
+    if($FileHash.Hash -ne $NET46_SHA256_HASH) { Write-Host 'Checksum failed!'; exit } 
+    Write-Output "Installing .NET 4.6..."
+    Start-Process -FilePath "$env:comspec" -Verb runAs -Wait -ArgumentList "/c $DOWNLOADDIR\$NET46FILENAME"
+    Set-Location -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce'
+    Set-ItemProperty -Path . -Name installOpenEDR -Value "C:\WINDOWS\system32\WindowsPowerShell\v1.0\powershell.exe Set-ExecutionPolicy Bypass -Scope Process -Force -File $DOWNLOADDIR\install.ps1"
 }
 
 # Download the installers...
@@ -81,22 +97,6 @@ schtasks /Create /TN "DFPM" /XML "DFPM.xml"
 #Turn on Powershell ScriptBlockLogging
 New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging" -Force
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging" -Name "EnableScriptBlockLogging" -Value 1 -Force
-
-
-# Check .NET 4.6
-$net46 = $false
-Get-ChildItem 'HKLM:\SOFTWARE\Microsoft\NET Framework Setup\NDP' -recurse |
-Get-ItemProperty -name Version,Release -EA 0 | ForEach-Object { if($_.Release -ge 393295) { $net46 = $true}}
-if($net46 -eq $false) {
-    Write-Output "Downloading .NET 4.6 Standalone Installer..."
-    $wc.DownloadFile($net46InstallerURL, "$DOWNLOADDIR\$NET46FILENAME")
-    $FileHash = Get-FileHash -Path "$DOWNLOADDIR\$NET46FILENAME"
-    if($FileHash.Hash -ne $NET46_SHA256_HASH) { Write-Host 'Checksum failed!'; exit } 
-    Write-Output "Installing .NET 4.6..."
-    Start-Process -FilePath "$env:comspec" -Verb runAs -Wait -ArgumentList "/c $DOWNLOADDIR\$NET46FILENAME"
-    Set-Location -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce'
-    Set-ItemProperty -Path . -Name installOpenEDR -Value "C:\WINDOWS\system32\WindowsPowerShell\v1.0\powershell.exe Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/jymcheong/openedrClient/master/install.ps1'))"
-}
 
 
 # Start agents
