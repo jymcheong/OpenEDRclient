@@ -40,7 +40,9 @@ if($net46 -eq $false) {
     $FileHash = Get-FileHash -Path "$DOWNLOADDIR\$NET46FILENAME"
     if($FileHash.Hash -ne $NET46_SHA256_HASH) { Write-Host 'Checksum failed!'; exit } 
     Write-Output "Installing .NET 4.6..."
-    Start-Process -FilePath "$env:comspec" -Verb runAs -Wait -ArgumentList "/c $DOWNLOADDIR\$NET46FILENAME"    
+    Start-Process -FilePath "$env:comspec" -Verb runAs -Wait -ArgumentList "/c $DOWNLOADDIR\$NET46FILENAME"
+    shutdown /r /t 30
+    exit
 }
 
 # Download the installers...
