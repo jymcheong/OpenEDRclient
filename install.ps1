@@ -34,7 +34,7 @@ Get-ItemProperty -name Version,Release -EA 0 | ForEach-Object { if($_.Release -g
 if($net46 -eq $false) {
     $wc.DownloadFile("https://raw.githubusercontent.com/jymcheong/openedrClient/master/install.ps1", "$DOWNLOADDIR\install.ps1")
     Set-Location -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce'
-    Set-ItemProperty -Path . -Name installOpenEDR -Value "C:\WINDOWS\system32\WindowsPowerShell\v1.0\powershell.exe -noexit -File $DOWNLOADDIR\install.ps1"
+    Set-ItemProperty -Path . -Name installOpenEDR -Value "C:\WINDOWS\system32\WindowsPowerShell\v1.0\powershell.exe -noexit  -executionPolicy Unrestricted -File $DOWNLOADDIR\install.ps1"
     Write-Output "Downloading .NET 4.6 Standalone Installer..."
     $wc.DownloadFile($net46InstallerURL, "$DOWNLOADDIR\$NET46FILENAME")
     $FileHash = Get-FileHash -Path "$DOWNLOADDIR\$NET46FILENAME"
