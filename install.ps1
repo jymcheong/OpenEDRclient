@@ -34,7 +34,7 @@ $nxlogInstallerURL='https://github.com/jymcheong/openedrClient/blob/master/nxlog
 # archived v11.10
 # $sysmonInstallerURL='https://www.dropbox.com/s/pe9hi9hl9cy6iyp/sysmonv11.10-78e640d1c0002a97e9d2d9ab528d7bba3a350e978d7f619f78859c3d68a85f25.zip?raw=1'
 
-# Sysinternal license forbids redistribution. But experience will show you upgrades break things.
+# Sysinternal license forbids redistribution.
 $sysmonInstallerURL='https://download.sysinternals.com/files/Sysmon.zip'
 
 $net46InstallerURL='https://download.microsoft.com/download/C/3/A/C3A5200B-D33C-47E9-9D70-2F7C65DAAD94/NDP46-KB3045557-x86-x64-AllOS-ENU.exe'
