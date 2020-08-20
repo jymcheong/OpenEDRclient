@@ -11,7 +11,9 @@ It leverages the following components.
 Sysinternal's license forbids redistribution: 
 https://docs.microsoft.com/en-us/sysinternals/license-terms
 
-For non-Internet facing environments, please download Sysmon, modifiy `install.ps1` accordingly & host within your internal web-server.
+[install.ps1](https://github.com/jymcheong/openedrClient/blob/master/install.ps1#L38) downloads directly from Microsoft. Please note that Sysinternals updates Sysmon regularly & [hash-checksum may change](https://github.com/jymcheong/openedrClient/blob/master/install.ps1#L100).
+
+For non-Internet facing endpoints, please download Sysmon, modifiy `install.ps1` accordingly & host within your internal web-server.
 
 ## Nxlog-CE 
 This is an archived version of NXLog-CE tested with OpenEDR client agents.
