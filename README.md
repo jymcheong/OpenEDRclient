@@ -16,4 +16,4 @@ https://docs.microsoft.com/en-us/sysinternals/license-terms
 For non-Internet facing endpoints, please download Sysmon, modifiy `install.ps1` accordingly & host within your internal web-server.
 
 ## Nxlog-CE 
-This is an archived version of NXLog-CE tested with OpenEDR client agents.
+This is an archived version of NXLog-CE tested with OpenEDR client agents. For commercial deployments, please contact NXLOG for commercial license. 
