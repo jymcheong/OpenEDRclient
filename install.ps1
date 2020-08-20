@@ -17,6 +17,7 @@ if(-not (Test-Administrator))
 if ($PSVersionTable.PSVersion.Major -lt 5)
 {
     Write-Error "Need Powershell 5 or above.";
+    exit;
 }
 
 $TARGETDIR="c:\windows\openedr"
@@ -25,16 +26,31 @@ $OPENEDRFILENAME='openedr.msi'
 $NXLOGFILENAME="nxlog-ce.msi"
 $SYSMONFILENAME="sysmon.zip"
 $NET46FILENAME="NDP46-KB3045557-x86-x64-AllOS-ENU.exe"
+
 $openEdrInstallerURL='https://github.com/jymcheong/openedrClient/blob/master/OpenEDR.msi?raw=true'
+# NXLOG public license allows redistribution
 $nxlogInstallerURL='https://github.com/jymcheong/openedrClient/blob/master/nxlog-ce-2.10.2150.msi?raw=true'
-$sysmonInstallerURL='https://github.com/jymcheong/openedrClient/blob/master/SysmonV11.10-78E640D1C0002A97E9D2D9AB528D7BBA3A350E978D7F619F78859C3D68A85F25.zip?raw=true'
+
+# archived v11.10
+# $sysmonInstallerURL='https://www.dropbox.com/s/pe9hi9hl9cy6iyp/sysmonv11.10-78e640d1c0002a97e9d2d9ab528d7bba3a350e978d7f619f78859c3d68a85f25.zip?raw=1'
+
+# Sysinternal license forbids redistribution. But experience will show you upgrades break things.
+$sysmonInstallerURL='https://download.sysinternals.com/files/Sysmon.zip'
+
 $net46InstallerURL='https://download.microsoft.com/download/C/3/A/C3A5200B-D33C-47E9-9D70-2F7C65DAAD94/NDP46-KB3045557-x86-x64-AllOS-ENU.exe'
+
 
 # System.Net.WebClient will fail to download if remote site has TLS1.2
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-$OPENEDR_SHA256_HASH='43A67C36F557B671CC5F646AB78746619F286D873F4A2AC64DF2AF5E1E283761'
+$OPENEDR_SHA256_HASH='BA97789F8FCE2AA0CCAEF45C7AD59C37DFFAF0ABDB7954F387269890677DD658'
 $NXLOG_SHA256_HASH='DCDDD2297C4FAD9FDEAA36276D58317A7EA1EFCD6851F89215A7231CDA6BA266'
-$SYSMON_SHA256_HASH='78E640D1C0002A97E9D2D9AB528D7BBA3A350E978D7F619F78859C3D68A85F25'
+
+# v11.10
+# $SYSMON_SHA256_HASH='78E640D1C0002A97E9D2D9AB528D7BBA3A350E978D7F619F78859C3D68A85F25'
+
+# v11.11 - note that installation will break if Sysinternal upgrades!
+$SYSMON_SHA256_HASH='8D78706B5ED7B7EC2C80BB388E3D361BA2D4B0461CBBD0C787CF523D4CFBFD81'
+
 $NET46_SHA256_HASH='B21D33135E67E3486B154B11F7961D8E1CFD7A603267FB60FEBB4A6FEAB5CF87'
 
 # Create a location to download the files to
@@ -81,7 +97,9 @@ if($FileHash.Hash -ne $NXLOG_SHA256_HASH) { Write-Host 'Checksum failed!'; exit 
 Write-Host 'Downloading Sysmon...'
 $wc.DownloadFile($sysmonInstallerURL, "$DOWNLOADDIR\$SYSMONFILENAME")
 $FileHash = Get-FileHash -Path "$DOWNLOADDIR\$SYSMONFILENAME"
-if($FileHash.Hash -ne $SYSMON_SHA256_HASH) { Write-Host 'Checksum failed!'; exit } 
+if($FileHash.Hash -ne $SYSMON_SHA256_HASH) { 
+   Write-Host 'Checksum failed! Sysinternal MAY have released a newer Sysmon!';
+} 
 Write-Host 'Extracting Sysmon...'
 [System.Reflection.Assembly]::LoadWithPartialName("System.IO.Compression.FileSystem") | Out-Null
 [System.IO.Compression.ZipFile]::ExtractToDirectory("$DOWNLOADDIR\$SYSMONFILENAME",$DOWNLOADDIR)
@@ -91,15 +109,20 @@ if(Test-Path $TARGETDIR) {
     IEX $wc.DownloadString('https://raw.githubusercontent.com/jymcheong/openedrClient/master/uninstall.ps1')
 }
 
-# start the MSI installations
+# start the installations
 Set-Location $DOWNLOADDIR
 Write-Output "Installing OpenEDR..."
 Start-Process -FilePath "$env:comspec" -Verb runAs -Wait -ArgumentList "/c msiexec /i $OPENEDRFILENAME TARGETDIR=$TARGETDIR /qb /L*V OPENEDRinstall.log"
 Write-Output "Installing NXLOG-CE..."
 Start-Process -FilePath "$env:comspec" -Verb runAs -Wait -ArgumentList "/c msiexec /i $NXLOGFILENAME INSTALLDIR=$TARGETDIR\nxlog /qb /L*V NXLOGinstall.log"
-Write-Output "Installing Sysmon..."
-Start-Process -FilePath "$env:comspec" -Verb runAs -Wait -ArgumentList "/c sysmon.exe -accepteula -i $TARGETDIR\installers\smconfig.xml"
 
+if(Test-Path "$DOWNLOADDIR\sysmon.exe") {
+    Write-Output "Installing Sysmon..."
+    Start-Process -FilePath "$env:comspec" -Verb runAs -Wait -ArgumentList "/c sysmon.exe -accepteula -i $TARGETDIR\installers\smconfig.xml"
+}
+else{
+    Write-Output "PLEASE DOWNLOAD & INSTALL SYSMON with: sysmon.exe -accepteula -i $TARGETDIR\installers\smconfig.xml"
+}
 
 ## Deploy in detectOnly mode; NO automated termination of foreign-file-backed processes
 if($detectOnly) {
@@ -144,3 +167,6 @@ $balmsg.Visible = $true
 $balmsg.ShowBalloonTip(20000)
 
 shutdown /r /t 300
+
+
+
