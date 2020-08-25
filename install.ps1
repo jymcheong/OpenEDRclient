@@ -57,6 +57,7 @@ $NET46_SHA256_HASH='B21D33135E67E3486B154B11F7961D8E1CFD7A603267FB60FEBB4A6FEAB5
 if(Test-Path $DOWNLOADDIR) { Remove-Item -LiteralPath $DOWNLOADDIR -Force -Recurse | Out-Null }
 New-Item -ItemType Directory -Force -Path $DOWNLOADDIR | Out-Null
 
+
 $wc = New-Object System.Net.WebClient
 
 # Download configuration 
