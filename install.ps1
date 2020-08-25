@@ -39,7 +39,6 @@ $sysmonInstallerURL='https://download.sysinternals.com/files/Sysmon.zip'
 
 $net46InstallerURL='https://download.microsoft.com/download/C/3/A/C3A5200B-D33C-47E9-9D70-2F7C65DAAD94/NDP46-KB3045557-x86-x64-AllOS-ENU.exe'
 
-
 # System.Net.WebClient will fail to download if remote site has TLS1.2
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 $OPENEDR_SHA256_HASH='BB06C2DCF01E1C63EDCBBD6DD0640F37713295F2F0D00E387E8686ADC90851F0'
@@ -56,7 +55,6 @@ $NET46_SHA256_HASH='B21D33135E67E3486B154B11F7961D8E1CFD7A603267FB60FEBB4A6FEAB5
 # Create a location to download the files to
 if(Test-Path $DOWNLOADDIR) { Remove-Item -LiteralPath $DOWNLOADDIR -Force -Recurse | Out-Null }
 New-Item -ItemType Directory -Force -Path $DOWNLOADDIR | Out-Null
-
 
 $wc = New-Object System.Net.WebClient
 
