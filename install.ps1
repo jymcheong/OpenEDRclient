@@ -54,7 +54,7 @@ $SYSMON_SHA256_HASH='8D78706B5ED7B7EC2C80BB388E3D361BA2D4B0461CBBD0C787CF523D4CF
 $NET46_SHA256_HASH='B21D33135E67E3486B154B11F7961D8E1CFD7A603267FB60FEBB4A6FEAB5CF87'
 
 # Create a location to download the files to
-if(Test-Path $DOWNLOADDIR) Remove-Item -LiteralPath $DOWNLOADDIR -Force -Recurse | Out-Null
+if(Test-Path $DOWNLOADDIR) { Remove-Item -LiteralPath $DOWNLOADDIR -Force -Recurse | Out-Null }
 New-Item -ItemType Directory -Force -Path $DOWNLOADDIR | Out-Null
 
 $wc = New-Object System.Net.WebClient
