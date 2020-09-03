@@ -41,7 +41,7 @@ $net46InstallerURL='https://download.microsoft.com/download/C/3/A/C3A5200B-D33C-
 
 # System.Net.WebClient will fail to download if remote site has TLS1.2
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-$OPENEDR_SHA256_HASH='27EC3BEE01F3B98E9B8F7EF3EDC90095147550A3EAE9EEEF2C9C808F99BC7903'
+$OPENEDR_SHA256_HASH='047957AD1AFEF117D52526323B7C060F874F83C84C993FF982E72290E174ABFE'
 $NXLOG_SHA256_HASH='DCDDD2297C4FAD9FDEAA36276D58317A7EA1EFCD6851F89215A7231CDA6BA266'
 
 # v11.10 - trust but verify, double check with Chocolatey: https://chocolatey.org/packages/sysmon/11.10#files - click show
@@ -166,6 +166,7 @@ $balmsg.Visible = $true
 $balmsg.ShowBalloonTip(20000)
 
 shutdown /r /t 300
+
 
 
 
