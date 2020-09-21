@@ -36,19 +36,20 @@ $nxlogInstallerURL='https://github.com/jymcheong/openedrClient/blob/master/nxlog
 
 # Sysinternal license forbids redistribution.
 $sysmonInstallerURL='https://download.sysinternals.com/files/Sysmon.zip'
+$sysmonConfigURL='https://raw.githubusercontent.com/jymcheong/OpenEDRclient/master/smconfig.xml'
 
 $net46InstallerURL='https://download.microsoft.com/download/C/3/A/C3A5200B-D33C-47E9-9D70-2F7C65DAAD94/NDP46-KB3045557-x86-x64-AllOS-ENU.exe'
 
 # System.Net.WebClient will fail to download if remote site has TLS1.2
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-$OPENEDR_SHA256_HASH='94F8E15705AEA56E5CB7BBF62F1A21A739CE504EBFE8B4F20AF2F001A26E0F74'
+$OPENEDR_SHA256_HASH='316DFB1FB1963F386378844D16BCB5F691ED45C761B8E238062550D4C321120A'
 $NXLOG_SHA256_HASH='DCDDD2297C4FAD9FDEAA36276D58317A7EA1EFCD6851F89215A7231CDA6BA266'
 
 # v11.10 - trust but verify, double check with Chocolatey: https://chocolatey.org/packages/sysmon/11.10#files - click show
 # $SYSMON_SHA256_HASH='78E640D1C0002A97E9D2D9AB528D7BBA3A350E978D7F619F78859C3D68A85F25'
 
-# v11.11 - note that installation may break if Sysinternal upgrades!
-$SYSMON_SHA256_HASH='8D78706B5ED7B7EC2C80BB388E3D361BA2D4B0461CBBD0C787CF523D4CFBFD81'
+# v12
+$SYSMON_SHA256_HASH='4770AF1C7BA31BE9A73C8607292DD2A3617BEC56271DAFCE84E49088057701A1'
 
 $NET46_SHA256_HASH='B21D33135E67E3486B154B11F7961D8E1CFD7A603267FB60FEBB4A6FEAB5CF87'
 
@@ -116,6 +117,8 @@ Write-Output "Installing NXLOG-CE..."
 Start-Process -FilePath "$env:comspec" -Verb runAs -Wait -ArgumentList "/c msiexec /i $NXLOGFILENAME INSTALLDIR=$TARGETDIR\nxlog /qb /L*V NXLOGinstall.log"
 
 if(Test-Path "$DOWNLOADDIR\sysmon.exe") {
+    Write-Output "Download Sysmon config file..."
+    $wc.DownloadFile($sysmonConfigURL, "$TARGETDIR\installers\smconfig.xml")
     Write-Output "Installing Sysmon..."
     Start-Process -FilePath "$env:comspec" -Verb runAs -Wait -ArgumentList "/c sysmon.exe -accepteula -i $TARGETDIR\installers\smconfig.xml"
 }
@@ -166,6 +169,7 @@ $balmsg.Visible = $true
 $balmsg.ShowBalloonTip(20000)
 
 shutdown /r /t 300
+
 
 
 
