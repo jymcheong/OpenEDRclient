@@ -59,11 +59,6 @@ New-Item -ItemType Directory -Force -Path $DOWNLOADDIR | Out-Null
 
 $wc = New-Object System.Net.WebClient
 
-# Download configuration 
-## Download the SFTP upload-destination configuration if defined
-if($SFTPCONFURL) {
-    $wc.DownloadFile($SFTPCONFURL, "$TARGETDIR\sftpconf.zip")    
-}
 
 # Check .NET 4.6
 $net46 = $false
@@ -129,6 +124,12 @@ else{
 ## Deploy in detectOnly mode; NO automated termination of foreign-file-backed processes
 if($detectOnly) {
   New-Item -ItemType Directory -Force -Path "$TARGETDIR\conf\dfpm\detectOnly" | Out-Null 
+}
+
+# Download configuration 
+## Download the SFTP upload-destination configuration if defined
+if($SFTPCONFURL) {
+    $wc.DownloadFile($SFTPCONFURL, "$TARGETDIR\sftpconf.zip")    
 }
 
 ## Update the target directory within various scheduled-task configuration files
