@@ -1,7 +1,7 @@
 # Open Endpoint Defense & Response
 
 * Tested on Windows 10, Server 2012R2 to 2019
-* Protects endpoints by denying non-escalated file-based PE Malware (EXE/DLL) execution
+* Protects endpoints from non-escalated file-based PE Malware (EXE/DLL) & Office-macro malware
 * Detects Living-Off-The-Land offensive techniques without hard-coded rules
 * Responds by automated or backend triggered malicious process termination 
 
