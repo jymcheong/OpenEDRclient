@@ -5,7 +5,7 @@
 * Detects Living-Off-The-Land offensive techniques without hard-coded rules
 * Responds by automated or backend triggered malicious process termination 
 
-It leverages the following components.
+It leverages the following components & reports to [an OpenEDR server (click to find out more)](https://github.com/jymcheong/OpenEDR).
 
 ## Sysmon
 Sysinternal's license forbids redistribution: 
