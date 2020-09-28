@@ -144,10 +144,13 @@ schtasks /Create /TN "UAT" /XML "uatSchedTask.xml"
 schtasks /Create /TN "UATupload" /XML "UploadSchtasks.xml"
 schtasks /Create /TN "DFPM" /XML "DFPM.xml"
 
-#Turn on Powershell ScriptBlockLogging
+# Turn on Powershell ScriptBlockLogging
 New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging" -Force
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging" -Name "EnableScriptBlockLogging" -Value 1 -Force
 
+# Deny HTA execution, see https://github.com/jymcheong/OpenEDRclient/issues/2
+cmd /c assoc .hta
+cmd /c ftype htafile=C:\Windows\System32\notepad.exe %1
 
 # Start agents
 schtasks /Run /TN "UATupload"
