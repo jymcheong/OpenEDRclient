@@ -149,7 +149,13 @@ New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\Policies\Microsoft\Windows\PowerShell
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging" -Name "EnableScriptBlockLogging" -Value 1 -Force
 
 # Deny HTA execution, see https://github.com/jymcheong/OpenEDRclient/issues/2
-cmd /c ftype HTAFILE=C:\Windows\System32\notepad.exe %1
+cmd /c ftype HTAFile=C:\Windows\System32\notepad.exe %1
+cmd /c ftype VBSFile=C:\Windows\System32\notepad.exe %1
+cmd /c ftype VBEFile=C:\Windows\System32\notepad.exe %1
+cmd /c ftype JSFile=C:\Windows\System32\notepad.exe %1
+cmd /c ftype JSEFile=C:\Windows\System32\notepad.exe %1
+cmd /c ftype WSFFile=C:\Windows\System32\notepad.exe %1
+cmd /c ftype WSHFile=C:\Windows\System32\notepad.exe %1
 
 # Start agents
 schtasks /Run /TN "UATupload"
