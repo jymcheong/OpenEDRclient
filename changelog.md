@@ -1,7 +1,7 @@
 # Changes
 ## 1 Oct 2020
 * Fixed #4
-* Added MSI file block 
+* Added MSI & LNK file block; LNK created by user using explorer.exe are allowed. 
 
 ## 28 Sep 2020
 Deny .HTA file by associating with notepad: https://github.com/jymcheong/OpenEDRclient/issues/2
