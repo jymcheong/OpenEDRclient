@@ -179,6 +179,47 @@ $balmsg.ShowBalloonTip(20000)
 
 shutdown /r /t 300
 
+# Windows 10 Attack Surface Reduction Rules
+if (Get-Command "Set-MpPreference" -errorAction SilentlyContinue)
+{   
+    # Block executable content from email client and webmail
+    Set-MpPreference -AttackSurfaceReductionRules_Ids BE9BA2D9-53EA-4CDC-84E5-9B1EEEE46550 -AttackSurfaceReductionRules_Actions Enabled -errorAction SilentlyContinue
+    
+    # Block all Office applications from creating child processes
+    Set-MpPreference -AttackSurfaceReductionRules_Ids D4F940AB-401B-4EFC-AADC-AD5F3C50688A -AttackSurfaceReductionRules_Actions Enabled -errorAction SilentlyContinue
+    
+    # Block Office applications from injecting code into other processes
+    Set-MpPreference -AttackSurfaceReductionRules_Ids 75668C1F-73B5-4CF0-BB93-3ECF5CB7CC84 -AttackSurfaceReductionRules_Actions Enabled -errorAction SilentlyContinue
+
+    # Block Office applications from injecting code into other processes
+    Set-MpPreference -AttackSurfaceReductionRules_Ids 75668C1F-73B5-4CF0-BB93-3ECF5CB7CC84 -AttackSurfaceReductionRules_Actions Enabled -errorAction SilentlyContinue
+
+    # Block execution of potentially obfuscated scripts
+    Set-MpPreference -AttackSurfaceReductionRules_Ids 5BEB7EFE-FD9A-4556-801D-275E5FFC04CC -AttackSurfaceReductionRules_Actions Enabled -errorAction SilentlyContinue
+
+    # Block Win32 API calls from Office macros
+    Set-MpPreference -AttackSurfaceReductionRules_Ids 92E97FA1-2EDF-4476-BDD6-9DD0B4DDDC7B -AttackSurfaceReductionRules_Actions Enabled -errorAction SilentlyContinue
+
+    # Block credential stealing from the Windows local security authority subsystem (lsass.exe)
+    Set-MpPreference -AttackSurfaceReductionRules_Ids 9e6c4e1f-7d60-472f-ba1a-a39ef669e4b2 -AttackSurfaceReductionRules_Actions Enabled -errorAction SilentlyContinue
+
+    # Block process creations originating from PSExec and WMI commands
+    Set-MpPreference -AttackSurfaceReductionRules_Ids d1e49aac-8f56-4280-b9ba-993a6d77406c -AttackSurfaceReductionRules_Actions Enabled -errorAction SilentlyContinue
+
+    # Block untrusted and unsigned processes that run from USB
+    Set-MpPreference -AttackSurfaceReductionRules_Ids b2b3f03d-6a65-4f7b-a9c7-1c7ef74a9ba4 -AttackSurfaceReductionRules_Actions Enabled -errorAction SilentlyContinue
+
+    # Block Office communication application from creating child processes
+    Set-MpPreference -AttackSurfaceReductionRules_Ids 26190899-1602-49e8-8b27-eb1d0a1ce869 -AttackSurfaceReductionRules_Actions Enabled -errorAction SilentlyContinue
+
+    # Block Adobe Reader from creating child processes
+    Set-MpPreference -AttackSurfaceReductionRules_Ids 7674ba52-37eb-4a4f-a9a1-f0f9a1619a2c -AttackSurfaceReductionRules_Actions Enabled -errorAction SilentlyContinue
+
+    # Block persistence through WMI event subscription
+    Set-MpPreference -AttackSurfaceReductionRules_Ids e6db77e5-3df2-4cf1-b95a-636979351e5b -AttackSurfaceReductionRules_Actions Enabled -errorAction SilentlyContinue
+
+} 
+
 
 
 
