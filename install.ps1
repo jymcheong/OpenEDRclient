@@ -127,8 +127,8 @@ if($detectOnly) {
 }
 
 ## Disables macro-stripping
-if($allowMacro) {
-  New-Item -ItemType Directory -Force -Path "$TARGETDIR\conf\dfpm\allowMacro" | Out-Null 
+if($keepMacro) {
+  New-Item -ItemType Directory -Force -Path "$TARGETDIR\conf\dfpm\keepMacro" | Out-Null 
 }
 
 # Download configuration 
