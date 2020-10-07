@@ -126,6 +126,11 @@ if($detectOnly) {
   New-Item -ItemType Directory -Force -Path "$TARGETDIR\conf\dfpm\detectOnly" | Out-Null 
 }
 
+## Disables macro-stripping
+if($allowMacro) {
+  New-Item -ItemType Directory -Force -Path "$TARGETDIR\conf\dfpm\allowMacro" | Out-Null 
+}
+
 # Download configuration 
 ## Download the SFTP upload-destination configuration if defined
 if($SFTPCONFURL) {
