@@ -1,4 +1,7 @@
 # Changes
+## 2 Oct 2020
+* Added Attack Surface Reduction Rules enablement - https://github.com/jymcheong/OpenEDRclient/issues/6
+
 ## 1 Oct 2020
 * Fixed #4
 * Added MSI & LNK file block; LNK created by user using explorer.exe are allowed. 
