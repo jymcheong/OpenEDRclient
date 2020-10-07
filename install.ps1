@@ -42,7 +42,7 @@ $net46InstallerURL='https://download.microsoft.com/download/C/3/A/C3A5200B-D33C-
 
 # System.Net.WebClient will fail to download if remote site has TLS1.2
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-$OPENEDR_SHA256_HASH='7FD1A84DFF07246C0F09929B9D923FAC880E62AA73A667E4231D148D390CF6EB'
+$OPENEDR_SHA256_HASH='943F29E2467DE3E81AFF3062B79FFC7984A4FAA094952ED0B40D4A68B464AABA'
 $NXLOG_SHA256_HASH='DCDDD2297C4FAD9FDEAA36276D58317A7EA1EFCD6851F89215A7231CDA6BA266'
 
 # v11.10 - trust but verify, double check with Chocolatey: https://chocolatey.org/packages/sysmon/11.10#files - click show
@@ -219,6 +219,7 @@ if (Get-Command "Set-MpPreference" -errorAction SilentlyContinue)
     Set-MpPreference -AttackSurfaceReductionRules_Ids e6db77e5-3df2-4cf1-b95a-636979351e5b -AttackSurfaceReductionRules_Actions Enabled -errorAction SilentlyContinue
 
 } 
+
 
 
 
