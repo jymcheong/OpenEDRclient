@@ -131,6 +131,18 @@ if($keepMacro) {
   New-Item -ItemType Directory -Force -Path "$TARGETDIR\conf\dfpm\keepMacro" | Out-Null 
 }
 
+if($keepExcelMacro) {
+  New-Item -ItemType Directory -Force -Path "$TARGETDIR\conf\dfpm\keepExcelMacro" | Out-Null 
+}
+
+if($keepWordMacro) {
+  New-Item -ItemType Directory -Force -Path "$TARGETDIR\conf\dfpm\keepWordMacro" | Out-Null 
+}
+
+if($keepPptMacro) {
+  New-Item -ItemType Directory -Force -Path "$TARGETDIR\conf\dfpm\keepPptMacro" | Out-Null 
+}
+
 # Download configuration 
 ## Download the SFTP upload-destination configuration if defined
 if($SFTPCONFURL) {
