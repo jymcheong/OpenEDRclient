@@ -126,22 +126,71 @@ if($detectOnly) {
   New-Item -ItemType Directory -Force -Path "$TARGETDIR\conf\dfpm\detectOnly" | Out-Null 
 }
 
-## Disables macro-stripping
-if($keepMacro) {
-  New-Item -ItemType Directory -Force -Path "$TARGETDIR\conf\dfpm\keepMacro" | Out-Null 
-}
+## Office Macro Configurations
+$officePath = (Get-ItemProperty  "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\Winword.exe").Path 
+if($officePath -match 'Office(?<officeVersion>\d\d)')
+{
+    if(!$allowMacro){
+        echo "found office version"
+        $version = $Matches.officeVersion + ".0"
+        # for Word 
+        if(!$allowWordMacro) {
+           $regWordPath = "HKCU:\SOFTWARE\Microsoft\office\" + $version + "\Word\security"
+           if(Test-Path $regWordPath) {
+              if([int]$version -lt 15) {
+                 $regWordName = "VBAWarnings"
+                 $regWordValue = 2
+              }
+              else {
+                 $regWordName = "blockcontentexecutionfrominternet"
+                 $regWordValue = 1
+              }
+           }
+           else { 
+              New-Item -Path $regWordPath -Force
+           }
+            New-ItemProperty -Path $regWordPath -Name $regWordName -Value $regWordValue
+        }
 
-if($keepExcelMacro) {
-  New-Item -ItemType Directory -Force -Path "$TARGETDIR\conf\dfpm\keepExcelMacro" | Out-Null 
-}
+        # for Excel 
+        if(!$allowExcelMacro) {
+            $regExcelPath = "HKCU:\SOFTWARE\Microsoft\office\" + $version + "\Excel\security"
+            if(Test-Path $regExcelPath) {
+               if([int]$version -lt 15) {
+                  $regExcelName = "VBAWarnings"
+                  $regExcelValue = 2
+               }
+               else {
+                  $regExcelName = "blockcontentexecutionfrominternet"
+                  $regExcelValue = 1
+               }
+            }
+            else { 
+               New-Item -Path $regExcelPath -Force
+            }
+             New-ItemProperty -Path $regExcelPath -Name $regExcelName -Value $regExcelValue
+         }
 
-if($keepWordMacro) {
-  New-Item -ItemType Directory -Force -Path "$TARGETDIR\conf\dfpm\keepWordMacro" | Out-Null 
-}
-
-if($keepPptMacro) {
-  New-Item -ItemType Directory -Force -Path "$TARGETDIR\conf\dfpm\keepPptMacro" | Out-Null 
-}
+         # for PowerPoint 
+        if(!$allowPowerPointMacro) {
+            $regPowerPointPath = "HKCU:\SOFTWARE\Microsoft\office\" + $version + "\PowerPoint\security"
+            if(Test-Path $regPowerPointPath) {
+               if([int]$version -lt 15) {
+                  $regPowerPointName = "VBAWarnings"
+                  $regPowerPointValue = 2
+               }
+               else {
+                  $regPowerPointName = "blockcontentexecutionfrominternet"
+                  $regPowerPointValue = 1
+               }
+            }
+            else { 
+               New-Item -Path $regPowerPointPath -Force
+            }
+             New-ItemProperty -Path $regPowerPointPath -Name $regPowerPointName -Value $regPowerPointValue
+         }
+   }
+} 
 
 # Download configuration 
 ## Download the SFTP upload-destination configuration if defined
