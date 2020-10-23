@@ -1,4 +1,8 @@
 # Changes
+
+## 23 Oct 2020
+* Added MSOffice Macro restriction in install.ps1
+
 ## 2 Oct 2020
 * Added Attack Surface Reduction Rules enablement - https://github.com/jymcheong/OpenEDRclient/issues/6
 
