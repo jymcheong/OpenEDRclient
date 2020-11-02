@@ -1,0 +1,13 @@
+Compress-Archive -LiteralPath Eula.txt, Sysmon.exe, NXLOG_CE_LICENSE, nxlog-ce-2.10.2150.msi, OpenEDR.msi -DestinationPath installer.zip -Force
+
+$TARGETFILE="install2.ps1"
+
+if(test-path "$PSScriptRoot\installer.zip"){
+    $FileHash = Get-FileHash -Path installer.zip
+    echo $FileHash.Hash
+
+    (Get-Content -path $TARGETFILE -Raw) -match "OPENEDR_SHA256_HASH='(.*)'"
+    $matches[1]
+    ((Get-Content -path $TARGETFILE -Raw) -replace $matches[1],$FileHash.Hash) | Set-Content -Path $TARGETFILE
+    
+}
