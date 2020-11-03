@@ -4,7 +4,7 @@ $TARGETFILE="install.ps1"
 
 if(test-path "$PSScriptRoot\installer.zip"){
     $FileHash = Get-FileHash -Path installer.zip
-    echo $FileHash.Hash
+    Write-Host $FileHash.Hash
 
     (Get-Content -path $TARGETFILE -Raw) -match "OPENEDR_SHA256_HASH='(.*)'"
     $matches[1]

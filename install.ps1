@@ -113,7 +113,7 @@ if($officePath -match 'Office(?<officeVersion>\d\d)')
                $regWordName = "blockcontentexecutionfrominternet"
                $regWordValue = 1
             }
-            New-ItemProperty -Path $regWordPath -Name $regWordName -Value $regWordValue
+            New-ItemProperty -Path $regWordPath -Name $regWordName -Value $regWordValue -Force
         }
 
         # for Excel 
@@ -130,7 +130,7 @@ if($officePath -match 'Office(?<officeVersion>\d\d)')
                $regExcelName = "blockcontentexecutionfrominternet"
                $regExcelValue = 1
             }
-            New-ItemProperty -Path $regExcelPath -Name $regExcelName -Value $regExcelValue
+            New-ItemProperty -Path $regExcelPath -Name $regExcelName -Value $regExcelValue -Force
          }
 
          # for PowerPoint 
@@ -147,7 +147,7 @@ if($officePath -match 'Office(?<officeVersion>\d\d)')
                $regPowerPointName = "blockcontentexecutionfrominternet"
                $regPowerPointValue = 1
             }
-            New-ItemProperty -Path $regPowerPointPath -Name $regPowerPointName -Value $regPowerPointValue
+            New-ItemProperty -Path $regPowerPointPath -Name $regPowerPointName -Value $regPowerPointValue -Force
          }
    }
 } 
