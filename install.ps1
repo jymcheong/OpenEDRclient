@@ -8,7 +8,7 @@ function Test-Administrator
     }
 }
 
-if(-not (Test-Administrator))
+if(!(Test-Administrator))
 {
     Write-Error "This script must be executed as Administrator.";
     exit;
@@ -22,35 +22,18 @@ if ($PSVersionTable.PSVersion.Major -lt 5)
 
 $TARGETDIR="c:\windows\openedr"
 $DOWNLOADDIR="$env:TEMP\openedr"
+$INSTALLERZIP='installer.zip'
 $OPENEDRFILENAME='openedr.msi'
-$NXLOGFILENAME="nxlog-ce.msi"
-$SYSMONFILENAME="sysmon.zip"
+$NXLOGFILENAME="nxlog-ce-2.10.2150.msi"
 $NET46FILENAME="NDP46-KB3045557-x86-x64-AllOS-ENU.exe"
 
-$openEdrInstallerURL='https://github.com/jymcheong/openedrClient/blob/master/OpenEDR.msi?raw=true'
-# NXLOG public license allows redistribution
-$nxlogInstallerURL='https://github.com/jymcheong/openedrClient/blob/master/nxlog-ce-2.10.2150.msi?raw=true'
-
-# archived v11.10
-# $sysmonInstallerURL='https://www.dropbox.com/s/pe9hi9hl9cy6iyp/sysmonv11.10-78e640d1c0002a97e9d2d9ab528d7bba3a350e978d7f619f78859c3d68a85f25.zip?raw=1'
-
-# Sysinternal license forbids redistribution.
-$sysmonInstallerURL='https://download.sysinternals.com/files/Sysmon.zip'
-$sysmonConfigURL='https://raw.githubusercontent.com/jymcheong/OpenEDRclient/master/smconfig.xml'
-
+$openEdrInstallerURL='https://github.com/jymcheong/openedrClient/blob/master/installer.zip?raw=true'
 $net46InstallerURL='https://download.microsoft.com/download/C/3/A/C3A5200B-D33C-47E9-9D70-2F7C65DAAD94/NDP46-KB3045557-x86-x64-AllOS-ENU.exe'
 
 # System.Net.WebClient will fail to download if remote site has TLS1.2
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-$OPENEDR_SHA256_HASH='7223ED49E52693B35898C4226D8E916E3F5A525FCFB94B7C775902851FB7D0BE'
-$NXLOG_SHA256_HASH='DCDDD2297C4FAD9FDEAA36276D58317A7EA1EFCD6851F89215A7231CDA6BA266'
 
-# v11.10 - trust but verify, double check with Chocolatey: https://chocolatey.org/packages/sysmon/11.10#files - click show
-# $SYSMON_SHA256_HASH='78E640D1C0002A97E9D2D9AB528D7BBA3A350E978D7F619F78859C3D68A85F25'
-
-# v12
-$SYSMON_SHA256_HASH='4770AF1C7BA31BE9A73C8607292DD2A3617BEC56271DAFCE84E49088057701A1'
-
+$OPENEDR_SHA256_HASH='EFE3FA2C00942B97E2A1F843C47F7A68FE3EB01EDDC5473BABE3CC44F05811EE'
 $NET46_SHA256_HASH='B21D33135E67E3486B154B11F7961D8E1CFD7A603267FB60FEBB4A6FEAB5CF87'
 
 # Create a location to download the files to
@@ -58,7 +41,6 @@ if(Test-Path $DOWNLOADDIR) { Remove-Item -LiteralPath $DOWNLOADDIR -Force -Recur
 New-Item -ItemType Directory -Force -Path $DOWNLOADDIR | Out-Null
 
 $wc = New-Object System.Net.WebClient
-
 
 # Check .NET 4.6
 $net46 = $false
@@ -78,30 +60,22 @@ if($net46 -eq $false) {
     exit
 }
 
-# Download the installers...
-Write-Host 'Downloading OpenEDR...'
-$wc.DownloadFile($openEdrInstallerURL, "$DOWNLOADDIR\$OPENEDRFILENAME")
-$FileHash = Get-FileHash -Path "$DOWNLOADDIR\$OPENEDRFILENAME"
+if(!(Test-Path "$PSScriptRoot\installer.zip")){
+   # Download the installers...
+   Write-Host 'Downloading OpenEDR...'
+   $wc.DownloadFile($openEdrInstallerURL, "$PSScriptRoot\$INSTALLERZIP")
+}
+
+$FileHash = Get-FileHash -Path "$PSScriptRoot\$INSTALLERZIP"
 if($FileHash.Hash -ne $OPENEDR_SHA256_HASH) { Write-Host 'Checksum failed!'; exit } 
 
-Write-Host 'Downloading Nxlog-CE...'
-$wc.DownloadFile($nxlogInstallerURL, "$DOWNLOADDIR\$NXLOGFILENAME")
-$FileHash = Get-FileHash -Path "$DOWNLOADDIR\$NXLOGFILENAME"
-if($FileHash.Hash -ne $NXLOG_SHA256_HASH) { Write-Host 'Checksum failed!'; exit } 
-
-Write-Host 'Downloading Sysmon...'
-$wc.DownloadFile($sysmonInstallerURL, "$DOWNLOADDIR\$SYSMONFILENAME")
-$FileHash = Get-FileHash -Path "$DOWNLOADDIR\$SYSMONFILENAME"
-if($FileHash.Hash -ne $SYSMON_SHA256_HASH) { 
-   Write-Host 'Checksum failed! Sysinternal MAY have released a newer Sysmon!';
-} 
-Write-Host 'Extracting Sysmon...'
+Write-Host "Extracting OpenEDR installers..."
 [System.Reflection.Assembly]::LoadWithPartialName("System.IO.Compression.FileSystem") | Out-Null
-[System.IO.Compression.ZipFile]::ExtractToDirectory("$DOWNLOADDIR\$SYSMONFILENAME",$DOWNLOADDIR)
+[System.IO.Compression.ZipFile]::ExtractToDirectory("$PSScriptRoot\$INSTALLERZIP",$DOWNLOADDIR)
 
 # uninstall if existing target directory exists
 if(Test-Path $TARGETDIR) {
-    IEX $wc.DownloadString('https://raw.githubusercontent.com/jymcheong/openedrClient/master/uninstall.ps1')
+    Invoke-Expression $wc.DownloadString('https://raw.githubusercontent.com/jymcheong/openedrClient/master/uninstall.ps1')
 }
 
 # start the installations
@@ -110,16 +84,8 @@ Write-Output "Installing OpenEDR..."
 Start-Process -FilePath "$env:comspec" -Verb runAs -Wait -ArgumentList "/c msiexec /i $OPENEDRFILENAME TARGETDIR=$TARGETDIR /qb /L*V OPENEDRinstall.log"
 Write-Output "Installing NXLOG-CE..."
 Start-Process -FilePath "$env:comspec" -Verb runAs -Wait -ArgumentList "/c msiexec /i $NXLOGFILENAME INSTALLDIR=$TARGETDIR\nxlog /qb /L*V NXLOGinstall.log"
-
-if(Test-Path "$DOWNLOADDIR\sysmon.exe") {
-    Write-Output "Download Sysmon config file..."
-    $wc.DownloadFile($sysmonConfigURL, "$TARGETDIR\installers\smconfig.xml")
-    Write-Output "Installing Sysmon..."
-    Start-Process -FilePath "$env:comspec" -Verb runAs -Wait -ArgumentList "/c sysmon.exe -accepteula -i $TARGETDIR\installers\smconfig.xml"
-}
-else{
-    Write-Output "PLEASE DOWNLOAD & INSTALL SYSMON with: sysmon.exe -accepteula -i $TARGETDIR\installers\smconfig.xml"
-}
+Write-Output "Installing Sysmon..."
+Start-Process -FilePath "$env:comspec" -Verb runAs -Wait -ArgumentList "/c sysmon.exe -accepteula -i $DOWNLOADDIR\smconfig.xml"
 
 ## Deploy in detectOnly mode; NO automated termination of foreign-file-backed processes
 if($detectOnly) {
@@ -131,7 +97,7 @@ $officePath = (Get-ItemProperty  "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersio
 if($officePath -match 'Office(?<officeVersion>\d\d)')
 {
     if(!$allowMacro){
-        echo "found office version"
+        Write-Host "Found office version!"
         $version = $Matches.officeVersion + ".0"
         # for Word 
         if(!$allowWordMacro) {
@@ -285,6 +251,15 @@ if (Get-Command "Set-MpPreference" -errorAction SilentlyContinue)
     Set-MpPreference -AttackSurfaceReductionRules_Ids e6db77e5-3df2-4cf1-b95a-636979351e5b -AttackSurfaceReductionRules_Actions Enabled -errorAction SilentlyContinue
 
 } 
+
+
+
+
+
+
+
+
+
 
 
 

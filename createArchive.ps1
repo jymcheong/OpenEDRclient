@@ -1,6 +1,6 @@
 Compress-Archive -LiteralPath Eula.txt, Sysmon.exe, smconfig.xml, NXLOG_CE_LICENSE, nxlog-ce-2.10.2150.msi, OpenEDR.msi -DestinationPath installer.zip -Force
 
-$TARGETFILE="install2.ps1"
+$TARGETFILE="install.ps1"
 
 if(test-path "$PSScriptRoot\installer.zip"){
     $FileHash = Get-FileHash -Path installer.zip
