@@ -2,6 +2,8 @@
 
 ## 3 Nov 2020
 * Refactored `install.ps1` to perform offline installation; installer.zip needs to be same path as install.ps1
+* Rollback to Sysmon 10.42; see https://social.technet.microsoft.com/Forums/en-US/9e2f381e-f4cd-4b6e-89dd-21c466509af9/rollback-to-sysmon-version-1042-?forum=miscutils
+* Fixed Office-Macro configuration in `install.ps1`
 
 ## 23 Oct 2020
 * Added MSOffice Macro restriction in install.ps1
