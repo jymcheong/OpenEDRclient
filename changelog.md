@@ -1,5 +1,8 @@
 # Changes
 
+## 3 Nov 2020
+* Refactored `install.ps1` to perform offline installation; installer.zip needs to be same path as install.ps1
+
 ## 23 Oct 2020
 * Added MSOffice Macro restriction in install.ps1
 
