@@ -102,58 +102,52 @@ if($officePath -match 'Office(?<officeVersion>\d\d)')
         # for Word 
         if(!$allowWordMacro) {
            $regWordPath = "HKCU:\SOFTWARE\Microsoft\office\" + $version + "\Word\security"
-           if(Test-Path $regWordPath) {
-              if([int]$version -lt 15) {
-                 $regWordName = "VBAWarnings"
-                 $regWordValue = 2
-              }
-              else {
-                 $regWordName = "blockcontentexecutionfrominternet"
-                 $regWordValue = 1
-              }
-           }
-           else { 
+           if(!(Test-Path $regWordPath)) {
               New-Item -Path $regWordPath -Force
            }
+           if([int]$version -lt 15) {
+               $regWordName = "VBAWarnings"
+               $regWordValue = 2
+           }
+           else {
+               $regWordName = "blockcontentexecutionfrominternet"
+               $regWordValue = 1
+            }
             New-ItemProperty -Path $regWordPath -Name $regWordName -Value $regWordValue
         }
 
         # for Excel 
         if(!$allowExcelMacro) {
             $regExcelPath = "HKCU:\SOFTWARE\Microsoft\office\" + $version + "\Excel\security"
-            if(Test-Path $regExcelPath) {
-               if([int]$version -lt 15) {
-                  $regExcelName = "VBAWarnings"
-                  $regExcelValue = 2
-               }
-               else {
-                  $regExcelName = "blockcontentexecutionfrominternet"
-                  $regExcelValue = 1
-               }
-            }
-            else { 
+            if(!(Test-Path $regExcelPath)) { 
                New-Item -Path $regExcelPath -Force
             }
-             New-ItemProperty -Path $regExcelPath -Name $regExcelName -Value $regExcelValue
+            if([int]$version -lt 15) {
+               $regExcelName = "VBAWarnings"
+               $regExcelValue = 2
+            }
+            else {
+               $regExcelName = "blockcontentexecutionfrominternet"
+               $regExcelValue = 1
+            }
+            New-ItemProperty -Path $regExcelPath -Name $regExcelName -Value $regExcelValue
          }
 
          # for PowerPoint 
         if(!$allowPowerPointMacro) {
             $regPowerPointPath = "HKCU:\SOFTWARE\Microsoft\office\" + $version + "\PowerPoint\security"
-            if(Test-Path $regPowerPointPath) {
-               if([int]$version -lt 15) {
-                  $regPowerPointName = "VBAWarnings"
-                  $regPowerPointValue = 2
-               }
-               else {
-                  $regPowerPointName = "blockcontentexecutionfrominternet"
-                  $regPowerPointValue = 1
-               }
-            }
-            else { 
+            if(!(Test-Path $regPowerPointPath)) {
                New-Item -Path $regPowerPointPath -Force
             }
-             New-ItemProperty -Path $regPowerPointPath -Name $regPowerPointName -Value $regPowerPointValue
+            if([int]$version -lt 15) {
+               $regPowerPointName = "VBAWarnings"
+               $regPowerPointValue = 2
+            }
+            else {
+               $regPowerPointName = "blockcontentexecutionfrominternet"
+               $regPowerPointValue = 1
+            }
+            New-ItemProperty -Path $regPowerPointPath -Name $regPowerPointName -Value $regPowerPointValue
          }
    }
 } 
