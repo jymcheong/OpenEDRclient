@@ -85,6 +85,8 @@
 			<!--SECTION: Microsoft Windows-->
 			<CommandLine condition="begin with">C:\Windows\openEDR</CommandLine> <!--Windows-->
 			<ParentCommandLine condition="begin with">C:\Windows\openEDR</ParentCommandLine>
+			<ParentCommandLine condition="is">C:\ProgramData\ZeroTier\One\zerotier-one_x64.exe</ParentCommandLine>
+			<ParentCommandLine condition="begin with">C:\Windows\System32\icacls.exe "C:\ProgramData\ZeroTier\One\networks.d</ParentCommandLine>
             	</ProcessCreate>
 	</RuleGroup>
 	
