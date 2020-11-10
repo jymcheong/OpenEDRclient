@@ -36,6 +36,9 @@ $net46InstallerURL='https://download.microsoft.com/download/C/3/A/C3A5200B-D33C-
 $OPENEDR_SHA256_HASH='84BF29314ADBCDF61C2927F01E1270DB9EE8BDEF15F5783E098F80DD71FB7479'
 $NET46_SHA256_HASH='B21D33135E67E3486B154B11F7961D8E1CFD7A603267FB60FEBB4A6FEAB5CF87'
 
+# clear any previously downloaded installer.zip
+if(Test-Path "C:\$INSTALLERZIP") { Remove-Item -LiteralPath "C:\$INSTALLERZIP" -Force -Recurse | Out-Null }
+
 # Create a location to download the files to
 if(Test-Path $DOWNLOADDIR) { Remove-Item -LiteralPath $DOWNLOADDIR -Force -Recurse | Out-Null }
 New-Item -ItemType Directory -Force -Path $DOWNLOADDIR | Out-Null
