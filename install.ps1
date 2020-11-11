@@ -102,22 +102,23 @@ if($officePath -match 'Office(?<officeVersion>\d\d)')
     if(!$allowMacro){
         Write-Host "Found office version!"
         $version = $Matches.officeVersion + ".0"
+        if([int]$version -lt 15) {
+            $regName = "VBAWarnings"
+            $regValue = 2
+        }
+        else {
+            $regName = "blockcontentexecutionfrominternet"
+            $regValue = 1
+        }
+
         # for Word 
         if(!$allowWordMacro) {
-           # test with HKLM but doesn't work...
-           $regWordPath = "HKCU:\SOFTWARE\Microsoft\office\" + $version + "\Word\security"
-           if(!(Test-Path $regWordPath)) {
-              New-Item -Path $regWordPath -Force
-           }
-           if([int]$version -lt 15) {
-               $regWordName = "VBAWarnings"
-               $regWordValue = 2
-           }
-           else {
-               $regWordName = "blockcontentexecutionfrominternet"
-               $regWordValue = 1
+            # test with HKLM but doesn't work...
+            $regWordPath = "HKCU:\SOFTWARE\Microsoft\office\" + $version + "\Word\security"
+            if(!(Test-Path $regWordPath)) {
+                New-Item -Path $regWordPath -Force
             }
-            New-ItemProperty -Path $regWordPath -Name $regWordName -Value $regWordValue -Force
+            New-ItemProperty -Path $regWordPath -Name $regName -Value $regValue -Force
         }
 
         # for Excel 
@@ -126,15 +127,7 @@ if($officePath -match 'Office(?<officeVersion>\d\d)')
             if(!(Test-Path $regExcelPath)) { 
                New-Item -Path $regExcelPath -Force
             }
-            if([int]$version -lt 15) {
-               $regExcelName = "VBAWarnings"
-               $regExcelValue = 2
-            }
-            else {
-               $regExcelName = "blockcontentexecutionfrominternet"
-               $regExcelValue = 1
-            }
-            New-ItemProperty -Path $regExcelPath -Name $regExcelName -Value $regExcelValue -Force
+            New-ItemProperty -Path $regExcelPath -Name $regName -Value $regValue -Force
          }
 
          # for PowerPoint 
@@ -143,15 +136,7 @@ if($officePath -match 'Office(?<officeVersion>\d\d)')
             if(!(Test-Path $regPowerPointPath)) {
                New-Item -Path $regPowerPointPath -Force
             }
-            if([int]$version -lt 15) {
-               $regPowerPointName = "VBAWarnings"
-               $regPowerPointValue = 2
-            }
-            else {
-               $regPowerPointName = "blockcontentexecutionfrominternet"
-               $regPowerPointValue = 1
-            }
-            New-ItemProperty -Path $regPowerPointPath -Name $regPowerPointName -Value $regPowerPointValue -Force
+            New-ItemProperty -Path $regPowerPointPath -Name $regName -Value $regValue -Force
          }
    }
 } 
