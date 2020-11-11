@@ -104,6 +104,7 @@ if($officePath -match 'Office(?<officeVersion>\d\d)')
         $version = $Matches.officeVersion + ".0"
         # for Word 
         if(!$allowWordMacro) {
+           # test with HKLM but doesn't work...
            $regWordPath = "HKCU:\SOFTWARE\Microsoft\office\" + $version + "\Word\security"
            if(!(Test-Path $regWordPath)) {
               New-Item -Path $regWordPath -Force
