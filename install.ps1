@@ -85,10 +85,14 @@ if(Test-Path $TARGETDIR) {
 Set-Location $DOWNLOADDIR
 Write-Output "Installing OpenEDR..."
 Start-Process -FilePath "$env:comspec" -Verb runAs -Wait -ArgumentList "/c msiexec /i $OPENEDRFILENAME TARGETDIR=$TARGETDIR /qb /L*V OPENEDRinstall.log"
-Write-Output "Installing NXLOG-CE..."
-Start-Process -FilePath "$env:comspec" -Verb runAs -Wait -ArgumentList "/c msiexec /i $NXLOGFILENAME INSTALLDIR=$TARGETDIR\nxlog /qb /L*V NXLOGinstall.log"
+
 Write-Output "Installing Sysmon..."
 Start-Process -FilePath "$env:comspec" -Verb runAs -Wait -ArgumentList "/c sysmon.exe -accepteula -i $DOWNLOADDIR\smconfig.xml"
+
+if(!$standAlone) { # see https://github.com/jymcheong/OpenEDRclient/issues/12
+    Write-Output "Installing NXLOG-CE..."
+    Start-Process -FilePath "$env:comspec" -Verb runAs -Wait -ArgumentList "/c msiexec /i $NXLOGFILENAME INSTALLDIR=$TARGETDIR\nxlog /qb /L*V NXLOGinstall.log"
+}
 
 ## Deploy in detectOnly mode; NO automated termination of foreign-file-backed processes
 if($detectOnly) {
@@ -96,7 +100,7 @@ if($detectOnly) {
 }
 
 ## Office Macro Configurations
-$officePath = (Get-ItemProperty  "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\Winword.exe").Path 
+$officePath = (Get-ItemProperty  "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\Winword.exe" -ErrorAction SilentlyContinue).Path 
 if($officePath -match 'Office(?<officeVersion>\d\d)')
 {
     if(!$allowMacro){
@@ -155,9 +159,12 @@ Set-Location "$TARGETDIR\installers"
 ((Get-Content -path uatSchedTask.xml -Raw) -replace 'TARGETDIR',"$TARGETDIR") | Set-Content -Path uatSchedTask.xml
 ((Get-Content -path nxlog.conf -Raw) -replace 'TARGETDIR',"$TARGETDIR\") | Set-Content -Path "$TARGETDIR\nxlog\conf\nxlog.conf"
 
-schtasks /Create /TN "UAT" /XML "uatSchedTask.xml"
-schtasks /Create /TN "UATupload" /XML "UploadSchtasks.xml"
 schtasks /Create /TN "DFPM" /XML "DFPM.xml"
+
+if(!$standAlone) {
+    schtasks /Create /TN "UAT" /XML "uatSchedTask.xml"
+    schtasks /Create /TN "UATupload" /XML "UploadSchtasks.xml"
+}
 
 # Turn on Powershell ScriptBlockLogging
 New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging" -Force
@@ -173,13 +180,19 @@ cmd /c ftype WSFFile=C:\Windows\System32\notepad.exe %1
 cmd /c ftype WSHFile=C:\Windows\System32\notepad.exe %1
 
 # Start agents
-schtasks /Run /TN "UATupload"
+if(!$standAlone) { schtasks /Run /TN "UATupload" }
 schtasks /Run /TN "DFPM"
 
 # Start log rotation
 $scpath = $env:WinDir + "\system32\sc.exe"
-Start-Process -FilePath $scpath -Verb runAs -Wait -ArgumentList "start nxlog"
-Write-Output "Started Nxlog service!"
+if(!$standAlone) {
+    Start-Process -FilePath $scpath -Verb runAs -Wait -ArgumentList "start nxlog"
+    Write-Output "Started Nxlog service!"
+}
+else{ # otherwise network address events will fill up the directory because there is no uploading & clean-up
+    Start-Process -FilePath $scpath -Verb runAs -Wait -ArgumentList "stop datafusion"
+    Write-Output "Stopped DataFusion service!"
+}
 
 # Notify user
 Add-Type -AssemblyName System.Windows.Forms
