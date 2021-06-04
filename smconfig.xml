@@ -928,6 +928,11 @@
 <!--include all to test-->
 	<RuleGroup name="" groupRelation="or">
       		<ProcessTampering onmatch="exclude">
+			    <Image condition="image">unknown process</Image>
+				<Image condition="is">C:\Program Files\Mozilla Firefox\firefox.exe</Image>
+				<Image condition="is">C:\Program Files\Mozilla Firefox\updater.exe</Image>
+				<Image condition="is">C:\Program Files\Mozilla Firefox\default-browser-agent.exe</Image>
+				<Image condition="is">C:\Program Files\Mozilla Firefox\pingsender.exe</Image>
       		</ProcessTampering>
     	</RuleGroup>
 
