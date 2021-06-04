@@ -33,7 +33,7 @@ $net46InstallerURL='https://download.microsoft.com/download/C/3/A/C3A5200B-D33C-
 # System.Net.WebClient will fail to download if remote site has TLS1.2
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
-$OPENEDR_SHA256_HASH='84BF29314ADBCDF61C2927F01E1270DB9EE8BDEF15F5783E098F80DD71FB7479'
+$OPENEDR_SHA256_HASH='A3B7A22979CEEE536C3F7969369875B17426888048B46E0AC19F0806768B1E33'
 $NET46_SHA256_HASH='B21D33135E67E3486B154B11F7961D8E1CFD7A603267FB60FEBB4A6FEAB5CF87'
 
 # clear any previously downloaded installer.zip
@@ -247,6 +247,7 @@ if (Get-Command "Set-MpPreference" -errorAction SilentlyContinue)
     Set-MpPreference -AttackSurfaceReductionRules_Ids e6db77e5-3df2-4cf1-b95a-636979351e5b -AttackSurfaceReductionRules_Actions Enabled -errorAction SilentlyContinue
 
 } 
+
 
 
 

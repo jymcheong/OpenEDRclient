@@ -14,3 +14,9 @@ For non-Internet facing endpoints, please download Sysmon, modifiy `install.ps1`
 
 ## Nxlog-CE 
 This is an archived version of NXLog-CE tested with OpenEDR client agents. For commercial deployments, please contact NXLOG for commercial license. 
+
+## Building your own installer
+- git clone this
+- change Sysmon, smconfig.xml or whatever that you need to
+- use powershell navigate to the project path
+- run: `Get-Content .\createArchive.ps1 -raw | iex`
