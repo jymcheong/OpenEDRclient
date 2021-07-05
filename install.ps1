@@ -248,8 +248,12 @@ if (Get-Command "Set-MpPreference" -errorAction SilentlyContinue)
 
 } 
 
+# Enable 4688, 4689 & commandLine audit events
+reg add HKLM\Software\Microsoft\Windows\CurrentVersion\Policies\System\Audit\ /v ProcessCreationIncludeCmdLine_Enabled /t REG_DWORD /d 1
 
+auditpol.exe /set /subcategory:"Process Creation" /success:enable /failure:enable
 
+auditpol.exe /set /subcategory:"Process Termination" /success:enable /failure:enable
 
 
 
