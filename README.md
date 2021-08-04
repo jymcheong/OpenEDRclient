@@ -19,7 +19,7 @@ This is an archived version of NXLog-CE tested with OpenEDR client agents. For c
 - git clone this
 - change Sysmon, smconfig.xml or whatever that you need to
 - use powershell navigate to the project path
-- run: `Get-Content .\createArchive.ps1 -raw | iex`
+- run: `Get-Content .\createInstallerZip.ps1 -raw | iex`
 
 ## Change-Log
 See https://github.com/jymcheong/OpenEDRclient/commits/master
