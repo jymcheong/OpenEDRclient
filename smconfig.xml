@@ -150,17 +150,7 @@
 		<!--COMMENT:	Useful data in building infection timelines.-->
 
 		<!--DATA: UtcTime, ProcessGuid, ProcessId, Image-->
-	<RuleGroup name="" groupRelation="or">
-		<ProcessTerminate onmatch="include">
-			<Image condition="begin with">C:\Users</Image> <!--Process terminations by user binaries-->
-			<Image condition="begin with">\</Image> <!--Devices and VSC shouldn't be executing changes | Credit: @SBousseaden @ionstorm @neu5ron @PerchedSystems [ https://twitter.com/SwiftOnSecurity/status/1133167323991486464 ] -->
-		</ProcessTerminate>
-	</RuleGroup>
 
-	<RuleGroup name="" groupRelation="or">
-		<ProcessTerminate onmatch="exclude">
-		</ProcessTerminate>
-	</RuleGroup>
 
 	<!--SYSMON EVENT ID 6 : DRIVER LOADED INTO KERNEL [DriverLoad]-->
 		<!--COMMENT:	Because drivers with bugs can be used to escalate to kernel permissions, be extremely selective
