@@ -99,6 +99,11 @@ if($detectOnly) {
   New-Item -ItemType Directory -Force -Path "$TARGETDIR\conf\dfpm\detectOnly" | Out-Null 
 }
 
+if($capturePEfiles) {
+  New-Item -ItemType Directory -Force -Path "$TARGETDIR\conf\dfpm\UploadSample" | Out-Null 
+}
+
+
 ## Office Macro Configurations
 $officePath = (Get-ItemProperty  "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\Winword.exe" -ErrorAction SilentlyContinue).Path 
 if($officePath -match 'Office(?<officeVersion>\d\d)')
