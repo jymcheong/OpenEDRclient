@@ -33,7 +33,7 @@ $net46InstallerURL='https://download.microsoft.com/download/C/3/A/C3A5200B-D33C-
 # System.Net.WebClient will fail to download if remote site has TLS1.2
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
-$OPENEDR_SHA256_HASH='8360CA0F7074AE798E2B91A36CC94F2F63DF6BA9E94E1988378726F2439AAE26'
+$OPENEDR_SHA256_HASH='9E173B7F79CB50CBAD7EB7D06DD04EB1D6987A19ABB27FB4C41E52D70A80EF31'
 $NET46_SHA256_HASH='B21D33135E67E3486B154B11F7961D8E1CFD7A603267FB60FEBB4A6FEAB5CF87'
 
 # clear any previously downloaded installer.zip
@@ -259,6 +259,7 @@ reg add HKLM\Software\Microsoft\Windows\CurrentVersion\Policies\System\Audit\ /v
 auditpol.exe /set /subcategory:"Process Creation" /success:enable /failure:enable
 
 auditpol.exe /set /subcategory:"Process Termination" /success:enable /failure:enable
+
 
 
 
